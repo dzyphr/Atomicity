@@ -6,7 +6,6 @@ from web3 import Web3
 from solcx import compile_standard, install_solc
 import json
 solcV = "0.8.0"
-gasMultiplier = 1.5
 contractName = "" #ENTER CONTRACT NAME HERE
 xsol = ".sol"
 xjson = ".json"
@@ -18,7 +17,7 @@ contractDir = "./contracts/"
 contractFile = contractName + xsol
 constructorArgs = True
 gasMod = 1
-chain = "Goerli"
+chain = os.getenv('CurrentChain') #set the current chain in .env
 
 with open(contractDir + contractFile, "r") as file:
     contract = file.read()
@@ -42,7 +41,8 @@ compilation = compile_standard(
 )
 
 
-verifyBlockExplorer = True  #set whether to verify on block explorer
+verifyBlockExplorer = os.getenv('VerifyBlockExplorer')  #true or false, based on .env VerifyBlockExplorer variable
+                            #set whether to verify on block explorer
                             #turn off when using ganache or anything else without one
 
 #write contract to json file
@@ -52,7 +52,7 @@ with open(contractName + xcomp + xjson, "w") as file:
 #get contract bytecode
 bytecode = compilation["contracts"][contractFile][contractName]["evm"]["bytecode"]["object"]
 
-#write bytecode to json file
+#write bytecode to txt file
 with open(contractName + xbyte + xtxt, "w") as file:
     file.write(bytecode)
 
@@ -143,7 +143,7 @@ if verifyBlockExplorer == True: #https://docs.etherscan.io/tutorials/verifying-c
                 'optimizationUsed': 0, #0 or 1
                 'runs': 200,
                 'evmversion': '',
-                'licenseType': 1
+                'licenseType': 5 #GPL 3
         }
     else:
         cmd = "node js/abiEnc.js " + contractName + " " + str(len(constructorParamVals))
@@ -164,7 +164,7 @@ if verifyBlockExplorer == True: #https://docs.etherscan.io/tutorials/verifying-c
                 'runs': 200,
                 'constructorArguements': encoding.replace(" ", "").replace("\n", ""), #popen leaves empty space remove w replace()
                 'evmversion': '',
-                'licenseType': 3
+                'licenseType': 5 #GPL 3
         }
     response = requests.post(url, headers=headers, params=content) #not sure how to properly check for response working though
     print(response.text)

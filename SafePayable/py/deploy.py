@@ -6,7 +6,6 @@ from web3 import Web3
 from solcx import compile_standard, install_solc
 import json
 solcV = "0.8.0"
-gasMultiplier = 1.5
 contractName = "SafePayable" #ENTER CONTRACT NAME HERE
 xsol = ".sol"
 xjson = ".json"
@@ -18,7 +17,7 @@ contractDir = "./contracts/"
 contractFile = contractName + xsol
 constructorArgs = False
 gasMod = 1
-chain = "Goerli"
+chain = os.getenv('CurrentChain')
 
 with open(contractDir + contractFile, "r") as file:
     contract = file.read()
