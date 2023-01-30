@@ -1,0 +1,7 @@
+# ignore all .env files
+*.env
+
+#ignore all milkAave scripts
+milkAave*
+aave*
+milk*
