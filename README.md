@@ -28,7 +28,9 @@
 
 ## Basic Usage:
 
-#### After .env variables are set up, run `new_frame ContractName` and replace `ContractName` with the name of your contract. 
+#### After .env variables are set up, run `new_frame ContractName` and replace `ContractName` with the name of your contract.
+
+#### `cd` to the newly created folder named after the `ContractName` argument you just chose.
 
 #### After this the only thing you should need to modify is the `constructorParamVals` around line ~102 of deploy.py, if you have parameters/arguments in your constructor. Set the values you would like to use in the constructor in this list if so and make sure constructorArgs is True on line 18. This will enable the framework to enter the arguments into the constructor when you launch the contract, then use the entered values to verify the contract on the block explorer (if desired) with the entered values. The types don't have to be specified as they will be interpreted from the contract abi via the help of w3js. 
 
