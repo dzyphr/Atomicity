@@ -10,17 +10,17 @@
 
 # Currently using linux filesystem calls by default
 
-## Set up your .env Variables:
+## Set up your .env Variables (go to `basic_framework` and make a .env file)
 
-#### GoerliSenderAddr="YourPublicAddress"
-#### GoerliPrivKey="YourPrivateKey" 
-#### Goerli="YourRPCEndpoint" _alchemy, infura, quiknode, etc..._
-#### GoerliID=5 _chainID_
-#### GoerliScan="https://api-goerli.etherscan.io/api" _block explorer api link for goerli_
-#### EtherscanAPIKey="YourAPIKey" _generic API key for any etherscan based block explorer_
-#### CurrentChain="Goerli"
-#### VerifyBlockExplorer="True" ###### _set whether or not to verify the contract_
-#### SolidityCompilerVersion="0.8.0" 
+#### **GoerliSenderAddr="YourPublicAddress"**
+#### **GoerliPrivKey="YourPrivateKey"** 
+#### **Goerli="YourRPCEndpoint"** _alchemy, infura, quiknode, etc..._
+#### **GoerliID=5** _chainID_
+#### **GoerliScan="https://api-goerli.etherscan.io/api"** _block explorer api link for goerli_
+#### **EtherscanAPIKey="YourAPIKey"** _generic API key for any etherscan based block explorer_
+#### **CurrentChain="Goerli"**
+#### **VerifyBlockExplorer="True"** _set whether or not to verify the contract_
+#### **SolidityCompilerVersion="0.8.0"** 
 
 ###### Verifying contracts only works on Goerli atm due to logic that selects the chain, will extend to all available chains
 
