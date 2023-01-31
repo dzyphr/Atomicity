@@ -1,6 +1,6 @@
 **In Development**
 # Atomicity WIP Stage: Alpha
-###### Small, Abstract, Modular, and modifiable EVM-Solidity scripting framework. 
+###### Small, Abstract, Modular, and Modifiable EVM-Solidity scripting framework. 
 ###### Aiming to support cross chain consensus code through building external compatible frameworks.
 **Current Project Status**:
   * Testnet contracts on Goerli
@@ -19,7 +19,7 @@
 #### GoerliScan="https://api-goerli.etherscan.io/api" _block explorer api link for goerli_
 #### EtherscanAPIKey="YourAPIKey" _generic API key for any etherscan based block explorer_
 #### CurrentChain="Goerli"
-#### VerifyBlockExplorer="True" _set whether or not to verify the contract_
+#### VerifyBlockExplorer="True" ###### _set whether or not to verify the contract_
 #### SolidityCompilerVersion="0.8.0" 
 
 ###### Verifying contracts only works on Goerli atm due to logic that selects the chain, will extend to all available chains
