@@ -32,6 +32,8 @@
 
 #### After this the only thing you should need to modify is the `constructorParamVals` around line ~102 of deploy.py, if you have parameters/arguments in your constructor. Set the values you would like to use in the constructor in this list if so and make sure constructorArgs is True on line 18. This will enable the framework to enter the arguments into the constructor when you launch the contract, then use the entered values to verify the contract on the block explorer (if desired) with the entered values. The types don't have to be specified as they will be interpreted from the contract abi via the help of w3js. 
 
+#### Write your contract in the `/contracts` folder. Note that we have not tested contracts using libraries yet only single page.
+
 #### Finally run `deploy.sh` (`python3 py/deploy.py`) 
 
 #### If your rpc gives gas estimation issues it's because were calling `rpc.eth.gas_price` and sometimes this can be innacurate enough to revert the transaction. Increase the `gasMod` variable on line 19 of deploy.py to multiply the gas price by the desired amount. Feel free to change the equation to raise gas for your own needs, and ONLY use any real-live-mainnet gas tokens AT YOUR OWN RISK! Testnet First!
