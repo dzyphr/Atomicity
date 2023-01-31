@@ -10,10 +10,10 @@ int main(int argc, char* argv[])
 	{
 		string newFrameName = argv[1];
 		string command = "cp -r basic_framework " + newFrameName;
-		const char* c_cmd = command.c_str();
-		system(c_cmd);
+		system(command.c_str());
 		string newContract = "echo \'// SPDX-License-Identifier: GPL-3.0-only\npragma solidity >=0.8.0 <0.9.0;\n\ncontract "+ newFrameName +"\n{\n\n}\' > " + newFrameName + "/contracts/" + newFrameName + ".sol";
-		const char* c_newContract = newContract.c_str();
-		system(c_newContract);
+		system(newContract.c_str());
+		string echoName = "echo \'ContractName=\"" + newFrameName  + "\"' >> " + newFrameName + "/.env";
+		system(echoName.c_str());
 	}
 }

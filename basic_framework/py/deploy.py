@@ -5,8 +5,8 @@ from dotenv import load_dotenv
 from web3 import Web3
 from solcx import compile_standard, install_solc
 import json
-solcV = "0.8.0"
-contractName = "" #ENTER CONTRACT NAME HERE
+solcV = os.getenv('SolidityCompilerVersion') #solidity compiler version
+contractName = os.getenv('ContractName') #this variable is set when creating a new_frame
 xsol = ".sol"
 xjson = ".json"
 xtxt = ".txt"
