@@ -1,9 +1,12 @@
+import pathlib
+from pathlib import Path
 import requests
 import os
 import time
 from dotenv import load_dotenv
+load_dotenv()
 from web3 import Web3
-from solcx import compile_standard, install_solc
+from solcx import compile_standard, install_solc, compile_files
 import json
 solcV = os.getenv('SolidityCompilerVersion') #solidity compiler version
 contractName = os.getenv('ContractName') #this variable is set when creating a new_frame
@@ -22,10 +25,10 @@ chain = os.getenv('CurrentChain') #set the current chain in .env
 with open(contractDir + contractFile, "r") as file:
     contract = file.read()
 
-
 install_solc(solcV)
-
-compilation = compile_standard(
+#NOTE: Theoretically we can just default to compile_files later right now its convinient to use working impls
+if os.getenv('MultiFile') == "False":
+    compilation = compile_standard(
     {
         "language": "Solidity",
         "sources": {contractFile: {"content": contract}},
@@ -37,33 +40,67 @@ compilation = compile_standard(
             }
         },
     },
-    solc_version=solcV,
-)
+        solc_version=solcV,
+    )
+else:
+    contractsList = os.listdir('contracts')
+    i = 0
+    absPaths = []
+    remapDict = {}
+    for contract in contractsList:
+        absPaths.append("./contracts/" + contract)
+        remapDict[contract] = "./contracts/" + contract
+    compilation = compile_files(
+        absPaths,
+        import_remappings=remapDict,
+        solc_version=solcV,
+    )
 
 
-verifyBlockExplorer = os.getenv('VerifyBlockExplorer')  #true or false, based on .env VerifyBlockExplorer variable
+#debug compilation output keys
+#for item in compilation:
+ #   print(item)
+#for item in compilation["./contracts/UniDirectionalPaymentChannel.sol:UniDirectionalPaymentChannel"]:
+ #  print(item)
+
+if os.getenv('VerifyBlockExplorer') == "True":
+    verifyBlockExplorer = True
+else:
+    verifyBlockExplorer = False
+
                             #set whether to verify on block explorer
                             #turn off when using ganache or anything else without one
-
-#write contract to json file
-with open(contractName + xcomp + xjson, "w") as file:
-    json.dump(compilation, file)
-
-#get contract bytecode
-bytecode = compilation["contracts"][contractFile][contractName]["evm"]["bytecode"]["object"]
-
-#write bytecode to txt file
-with open(contractName + xbyte + xtxt, "w") as file:
-    file.write(bytecode)
-
-#get abi
-abi = compilation["contracts"][contractFile][contractName]["abi"]
-
-#write abi to file
-with open(contractName + xabi + xjson, "w") as file:
-    json.dump(abi, file)
-
-load_dotenv()
+#NOTE: Theoretically we can just default to compile_files later right now its convinient to use working impls
+if os.getenv('MultiFile') == "False":
+    #write contract compilation to json file
+    with open(contractName + xcomp + xjson, "w") as file:
+        json.dump(compilation, file)
+    #get contract bytecode
+    bytecode = compilation["contracts"][contractFile][contractName]["evm"]["bytecode"]["object"]
+    #write bytecode to txt file
+    with open(contractName + xbyte + xtxt, "w") as file:
+        file.write(bytecode)
+    #get abi
+    abi = compilation["contracts"][contractFile][contractName]["abi"]
+    #write abi to file
+    with open(contractName + xabi + xjson, "w") as file:
+        json.dump(abi, file)
+else:
+    #write contract compilation to json file
+    with open(contractName + xcomp + xjson, "w") as file:
+        json.dump(compilation, file)
+    #get contract bytecode
+    bytecode = compilation[contractDir + contractName + xsol + ":" + contractName]['bin']
+    #write bytecode to txt file
+    with open(contractName + xbyte + xtxt, "w") as file:
+        file.write(bytecode)
+    #get abi
+    abi = compilation[contractDir + contractName + xsol + ":" + contractName]['abi']
+    #write abi to file
+    with open(contractName + xabi + xjson, "w") as file:
+        json.dump(abi, file)
+    #TODO:flattening not automated yet
+    flat = Path(contractDir + contractName + "_flat" + xsol).read_text() #flatten the multiple files
 
 #PICK THE CHAIN HERE #fills all chain specific args with env variables
 if chain == "Goerli":
@@ -73,18 +110,16 @@ if chain == "Goerli":
     senderPrivKey = os.getenv('GoerliPrivKey')
     url = os.getenv('GoerliScan')
 
-InitSimpleStorage = rpc.eth.contract(abi=abi, bytecode=bytecode)
+InitContract = rpc.eth.contract(abi=abi, bytecode=bytecode)
 
 print("current gas price :", rpc.eth.gas_price );
 
 if constructorArgs == True:
     #IF YOU HAVE CONSTRUCTOR PARAMETERS FILL THE VALUES IN ORDER INTO THIS LIST
-    #contract deploy transaction interaction
-    #constructor parameter values to be used when deploying the contract, can be sourced from env or args later
     constructorParamVals = [
     ]
 
-    tx = InitSimpleStorage.constructor(*constructorParamVals).buildTransaction( 
+    tx = InitContract.constructor(*constructorParamVals).buildTransaction( 
             #since there is constructor arguments in the contract provide them 
             #in the constructor() function call parenthesis
         {
@@ -95,7 +130,7 @@ if constructorArgs == True:
         }
     )
 else:
-    tx = InitSimpleStorage.constructor().buildTransaction( 
+    tx = InitContract.constructor().buildTransaction( 
         {
             "chainId": chain_id,
             "from": senderAddr,
@@ -109,7 +144,7 @@ signedTx = rpc.eth.account.sign_transaction(tx, private_key=senderPrivKey)
 tx_hash = rpc.eth.send_raw_transaction(signedTx.rawTransaction)
 tx_receipt = rpc.eth.wait_for_transaction_receipt(tx_hash)
 print(contractName, "Deployed!\n")
-SimpleStorage = rpc.eth.contract(address=tx_receipt.contractAddress, abi=abi)
+uploadedContract = rpc.eth.contract(address=tx_receipt.contractAddress, abi=abi)
 
 APIsolcV = "v0.8.18-nightly.2023.1.25+commit.fd9ac9ab" #latest nightly as default
 match solcV: #match solidity compiler version to API accepted verification version name

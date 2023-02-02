@@ -12,10 +12,14 @@
 
 ## Set up your .env Variables (go to `basic_framework` and make a .env file)
 
+## Note: If you encounter a bug while using python-dotenv you can upgrade to the latest python currently 3.11
+
+## If you get another bug related web3 package https://github.com/ethereum/web3.py/issues/2704 you can follow these steps: `vim ~/.local/lib/python3.11/site-packages/parsimonious/expressions.py` and change getargspec import line to say: `from inspect import getfullargspec` These two bugs are like a sandwich between python versions placing our framework in the middle of it, so far so good though.
+
 #### **GoerliSenderAddr="YourPublicAddress"**
 #### **GoerliPrivKey="YourPrivateKey"** 
 #### **Goerli="YourRPCEndpoint"** 
-###### _alchemy, infura, quiknode, etc..._
+###### _alchemy, infura, quicknode, etc..._
 #### **GoerliID=5** 
 ###### _chainID_
 #### **GoerliScan="https://api-goerli.etherscan.io/api"** 
