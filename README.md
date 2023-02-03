@@ -12,9 +12,9 @@
 
 ## Set up your .env Variables (go to `basic_framework` and make a .env file)
 
-## Note: If you encounter a bug while using python-dotenv you can upgrade to the latest python currently 3.11
+###### Note: If you encounter a bug while using python-dotenv you can upgrade to the latest python currently 3.11
 
-## If you get another bug related web3 package https://github.com/ethereum/web3.py/issues/2704 you can follow these steps: `vim ~/.local/lib/python3.11/site-packages/parsimonious/expressions.py` and change getargspec import line to say: `from inspect import getfullargspec` These two bugs are like a sandwich between python versions placing our framework in the middle of it, so far so good though.
+###### If you get another bug related web3 package https://github.com/ethereum/web3.py/issues/2704 you can follow these steps: `vim ~/.local/lib/python3.11/site-packages/parsimonious/expressions.py` and change getargspec import line to say: `from inspect import getfullargspec` These two bugs are like a sandwich between python versions placing our framework in the middle of it, so far so good though.
 
 #### **GoerliSenderAddr="YourPublicAddress"**
 #### **GoerliPrivKey="YourPrivateKey"** 
@@ -35,11 +35,13 @@
 
 ## Basic Usage:
 
-#### After .env variables are set up, run `new_frame ContractName` and replace `ContractName` with the name of your contract.
+### After .env variables are set up, run `new_frame ContractName` and replace `ContractName` with the name of your contract.
+
+#### NOTE: If you have constructor parameters use the flag `-CA` followed by the number of parameters, and then one argument for each parameter.
+
+#### NOTE: If you have multiple contract files that you need to compile all together, use the `-M` flag. You can use `-M` or `-CA` iterchangably provided you give all the correct follow-up parameters if using `-CA` this format should follow for future arguments. #WARN this is an unstable update, we are about to implement the flattening involved in verifying these contracts programatically, to verify from unstable you need to manually flatten
 
 #### `cd` to the newly created folder named after the `ContractName` argument you just chose.
-
-#### After this the only thing you should need to modify is the `constructorParamVals` around line ~102 of deploy.py, if you have parameters/arguments in your constructor. Set the values you would like to use in the constructor in this list if so and make sure constructorArgs is True on line 18. This will enable the framework to enter the arguments into the constructor when you launch the contract, then use the entered values to verify the contract on the block explorer (if desired) with the entered values. The types don't have to be specified as they will be interpreted from the contract abi via the help of w3js. 
 
 #### Write your contract in the `/contracts` folder. Note that we have not tested contracts using libraries yet only single page.
 

@@ -18,7 +18,7 @@ xcomp = "-comp"
 xbyte = "-bytecode"
 contractDir = "./contracts/"
 contractFile = contractName + xsol
-constructorArgs = True
+constructorArgs = bool(os.getenv('ConstructorArgs'))
 gasMod = 1
 chain = os.getenv('CurrentChain') #set the current chain in .env
 
@@ -102,6 +102,10 @@ else:
     #TODO:flattening not automated yet
     flat = Path(contractDir + contractName + "_flat" + xsol).read_text() #flatten the multiple files
 
+if os.getenv('MultiFile') == "True": #flatten based on multifile arg
+    flat = Path(contractDir + contractName + "_flat" + xsol).read_text() #flatten the multiple files
+
+
 #PICK THE CHAIN HERE #fills all chain specific args with env variables
 if chain == "Goerli":
     rpc = Web3(Web3.HTTPProvider(os.getenv('Goerli')))
@@ -116,8 +120,8 @@ print("current gas price :", rpc.eth.gas_price );
 
 if constructorArgs == True:
     #IF YOU HAVE CONSTRUCTOR PARAMETERS FILL THE VALUES IN ORDER INTO THIS LIST
-    constructorParamVals = [
-    ]
+#    constructorParamVals = [
+#    ] #automating this
 
     tx = InitContract.constructor(*constructorParamVals).buildTransaction( 
             #since there is constructor arguments in the contract provide them 

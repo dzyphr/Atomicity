@@ -5,3 +5,7 @@
 milkAave*
 aave*
 milk*
+
+#ignore testname folder from test_new_frame output
+testname*
+
