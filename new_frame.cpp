@@ -11,11 +11,14 @@ int main(int argc, char* argv[])
 	{
 		cout << "enter the name of the new contract frame to create\n";
 	}
-	else if (argc > 2)
+	else if (argc >= 2)
 	{
 
 		standardOperations(argv[1]);
-		extraArgCheck(argc, argv);
+		if (argc > 2)
+		{
+			extraArgCheck(argc, argv);
+		}
 	}
 }
 
@@ -65,6 +68,12 @@ void extraArgCheck(int argc, char* argv[])
 void arg2IsMultiFile(int argc, char* argv[])
 {
 	string newFrameName = argv[1];
+	string echoFlatten = 
+		"echo \'{\"inputFilePath\": \"../" + 
+		newFrameName  + "/contracts/" + 
+		newFrameName  + ".sol\",\"outputDir\": \"../" + 
+		newFrameName  + "/contracts/\"}\' > solidity-flattener/config.json";
+	system(echoFlatten.c_str());
 	string echoMultiFileTrue = "echo \'MultiFile=\"True\"\' >> " + newFrameName + "/.env";
 	system(echoMultiFileTrue.c_str());
 	if (argc >= 4)
@@ -180,6 +189,12 @@ void arg2IsConstructorArgs(int argc, char* argv[])
 			{
 				string echoMultiFileTrue = "echo \'MultiFile=\"True\"\' >> " + newFrameName + "/.env";
 				system(echoMultiFileTrue.c_str());
+				string echoFlatten = 
+					"echo \'{\"inputFilePath\": \"../" + 
+					newFrameName  + "/contracts/" + 
+					newFrameName  + ".sol\",\"outputDir\": \"../" + 
+					newFrameName  + "/contracts/\"}\' > solidity-flattener/config.json";
+				system(echoFlatten.c_str());
 			}
 			else
 			{

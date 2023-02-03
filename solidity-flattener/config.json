@@ -1,4 +1,1 @@
-{
-	"inputFilePath": "../contracts/UniDirectionalPaymentChannel.sol",
-	"outputDir": "../contracts/"
-}
+{"inputFilePath": "../testname/contracts/testname.sol","outputDir": "../testname/contracts/"}

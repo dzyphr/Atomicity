@@ -30,7 +30,7 @@ process.argv.forEach(function (arg, index, array) {
 			}
 			break
 	}
-	lastindex = index
+lastindex = index
 })
 if (constructorParamsVals.length != constructorParams)
 {
@@ -69,9 +69,8 @@ if (constructorParams > 0)
 	//grab each parameter from the constructor, get its type, get the value that was
 	//entered into it when the contract was published, encode the parameter with its value. 
 	var jsonConstructor = jsonABI[0]
-	//console.log(jsonConstructor['inputs'].length)
 	var typeArray = []
-	if (jsonConstructor['inputs'].length != 0)
+	if (jsonConstructor["inputs"].length != 0)
 	{
 		for (let i = 0;  i < jsonConstructor["inputs"].length; i++)
 		{
@@ -93,9 +92,9 @@ if (constructorParams > 0)
 	)
 	for (let i = 0;  i < constructorParams; i++)
 	{
-			var encStr = web3.eth.abi.encodeParameter(typeArray[i], constructorParamsVals[i]).toString()
-			var chop0x = encStr.slice(2) //encStr with 0x removed
-			encodedConstructor = encodedConstructor + chop0x
+		var encStr = web3.eth.abi.encodeParameter(typeArray[i], constructorParamsVals[i]).toString()
+		var chop0x = encStr.slice(2) //encStr with 0x removed
+		encodedConstructor = encodedConstructor + chop0x
 	}
 	console.log(encodedConstructor)
 }

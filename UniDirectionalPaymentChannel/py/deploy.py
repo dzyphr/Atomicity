@@ -1,3 +1,4 @@
+constructorParamVals = ["0x01225869F695b4b7F0af5d75381Fe340A4d27593"]
 import pathlib
 from pathlib import Path
 import requests
@@ -8,10 +9,8 @@ load_dotenv()
 from web3 import Web3
 from solcx import compile_standard, install_solc, compile_files
 import json
-solcV = os.getenv('SolidityCompilerVersion') #solidity compiler versio
-print(solcV)
+solcV = os.getenv('SolidityCompilerVersion') #solidity compiler version
 contractName = os.getenv('ContractName') #this variable is set when creating a new_frame
-print(contractName)
 xsol = ".sol"
 xjson = ".json"
 xtxt = ".txt"
@@ -20,34 +19,38 @@ xcomp = "-comp"
 xbyte = "-bytecode"
 contractDir = "./contracts/"
 contractFile = contractName + xsol
-constructorArgs = True
+constructorArgs = bool(os.getenv('ConstructorArgs'))
 gasMod = 1
 chain = os.getenv('CurrentChain') #set the current chain in .env
 
 with open(contractDir + contractFile, "r") as file:
     contract = file.read()
 
+if bool(os.getenv('VerifyBlockExplorer')) == True:
+    verifyBlockExplorer = True
+else:
+    verifyBlockExplorer = False
+
+
 
 install_solc(solcV)
+#NOTE: Theoretically we can just default to compile_files later right now its convinient to use working impls
 if os.getenv('MultiFile') == "False":
     compilation = compile_standard(
-        {
-            "language": "Solidity",
-            "sources": {contractFile: {"content": contract}},
-            "settings": {
-                "outputSelection": {
-                    "*": {
-                        "*": ["abi", "metadata", "evm.bytecode", "evm.bytecode.sourceMap"]
-                    }
+    {
+        "language": "Solidity",
+        "sources": {contractFile: {"content": contract}},
+        "settings": {
+            "outputSelection": {
+                "*": {
+                    "*": ["abi", "metadata", "evm.bytecode", "evm.bytecode.sourceMap"]
                 }
-            },
+            }
         },
+    },
         solc_version=solcV,
     )
 else:
-
-#alternative compilation method compile_files useful for external library inclusion 
-#https://solcx.readthedocs.io/en/latest/using-the-compiler.html#compiling-files
     contractsList = os.listdir('contracts')
     i = 0
     absPaths = []
@@ -55,6 +58,10 @@ else:
     for contract in contractsList:
         absPaths.append("./contracts/" + contract)
         remapDict[contract] = "./contracts/" + contract
+
+    absPaths.insert(0, absPaths.pop(absPaths.index('./contracts/UniDirectionalPaymentChannel.sol')))
+    print(absPaths)
+    print(remapDict)
     compilation = compile_files(
         absPaths,
         import_remappings=remapDict,
@@ -62,38 +69,45 @@ else:
     )
 
 
-#dbg compilation output keys
+#debug compilation output keys
 #for item in compilation:
  #   print(item)
 #for item in compilation["./contracts/UniDirectionalPaymentChannel.sol:UniDirectionalPaymentChannel"]:
  #  print(item)
 
-if os.getenv('VerifyBlockExplorer') == "True":
-    verifyBlockExplorer = True
-else:
-    verifyBlockExplorer = False
 
                             #set whether to verify on block explorer
                             #turn off when using ganache or anything else without one
-#print(compilation[contractDir  + contractFile + ":" + contractName])
+#NOTE: Theoretically we can just default to compile_files later right now its convinient to use working impls
+if bool(os.getenv('MultiFile')) == "False":
+    #write contract compilation to json file
+    with open(contractName + xcomp + xjson, "w") as file:
+        json.dump(compilation, file)
+    #get contract bytecode
+    bytecode = compilation["contracts"][contractFile][contractName]["evm"]["bytecode"]["object"]
+    #write bytecode to txt file
+    with open(contractName + xbyte + xtxt, "w") as file:
+        file.write(bytecode)
+    #get abi
+    abi = compilation["contracts"][contractFile][contractName]["abi"]
+    #write abi to file
+    with open(contractName + xabi + xjson, "w") as file:
+        json.dump(abi, file)
+else:
+    #write contract compilation to json file
+    with open(contractName + xcomp + xjson, "w") as file:
+        json.dump(compilation, file)
+    #get contract bytecode
+    bytecode = compilation[contractDir + contractName + xsol + ":" + contractName]['bin']
+    #write bytecode to txt file
+    with open(contractName + xbyte + xtxt, "w") as file:
+        file.write(bytecode)
+    #get abi
+    abi = compilation[contractDir + contractName + xsol + ":" + contractName]['abi']
+    #write abi to file
+    with open(contractName + xabi + xjson, "w") as file:
+        json.dump(abi, file)
 
-#write contract compilation to json file
-with open(contractName + xcomp + xjson, "w") as file:
-    json.dump(compilation, file)
-
-#get contract bytecode
-bytecode = compilation["./contracts/UniDirectionalPaymentChannel.sol:UniDirectionalPaymentChannel"]['bin']
-#write bytecode to txt file
-with open(contractName + xbyte + xtxt, "w") as file:
-    file.write(bytecode)
-#get abi
-abi = compilation["./contracts/UniDirectionalPaymentChannel.sol:UniDirectionalPaymentChannel"]['abi']
-
-#write abi to file
-with open(contractName + xabi + xjson, "w") as file:
-    json.dump(abi, file)
-
-flat = Path(contractDir + contractName + "_flat" + xsol).read_text()
 
 
 #PICK THE CHAIN HERE #fills all chain specific args with env variables
@@ -104,19 +118,16 @@ if chain == "Goerli":
     senderPrivKey = os.getenv('GoerliPrivKey')
     url = os.getenv('GoerliScan')
 
-InitSimpleStorage = rpc.eth.contract(abi=abi, bytecode=bytecode)
+InitContract = rpc.eth.contract(abi=abi, bytecode=bytecode)
 
 print("current gas price :", rpc.eth.gas_price );
 
 if constructorArgs == True:
     #IF YOU HAVE CONSTRUCTOR PARAMETERS FILL THE VALUES IN ORDER INTO THIS LIST
-    #contract deploy transaction interaction
-    #constructor parameter values to be used when deploying the contract, can be sourced from env or args later
-    constructorParamVals = [
-            "0x01225869F695b4b7F0af5d75381Fe340A4d27593" #goerlitestnet2
-    ]
+#    constructorParamVals = [
+#    ] #automating this
 
-    tx = InitSimpleStorage.constructor(*constructorParamVals).buildTransaction( 
+    tx = InitContract.constructor(*constructorParamVals).buildTransaction( 
             #since there is constructor arguments in the contract provide them 
             #in the constructor() function call parenthesis
         {
@@ -127,7 +138,7 @@ if constructorArgs == True:
         }
     )
 else:
-    tx = InitSimpleStorage.constructor().buildTransaction( 
+    tx = InitContract.constructor().buildTransaction( 
         {
             "chainId": chain_id,
             "from": senderAddr,
@@ -141,8 +152,18 @@ signedTx = rpc.eth.account.sign_transaction(tx, private_key=senderPrivKey)
 tx_hash = rpc.eth.send_raw_transaction(signedTx.rawTransaction)
 tx_receipt = rpc.eth.wait_for_transaction_receipt(tx_hash)
 print(contractName, "Deployed!\n")
-SimpleStorage = rpc.eth.contract(address=tx_receipt.contractAddress, abi=abi)
+uploadedContract = rpc.eth.contract(address=tx_receipt.contractAddress, abi=abi)
 
+if os.getenv('MultiFile') == "True": #flatten based on multifile arg
+    flatOutput = os.popen("cd ../solidity-flattener/ && npm start").read()
+    print(flatOutput)
+    if flatOutput.__contains__("Success!"):
+        print("flattened contract!")
+    else:
+        print("failed to flatten multi-file contract, verification wont succeed automatically!")
+        if verifyBlockExplorer == True:
+            exit(1)
+    flat = Path(contractDir + contractName + "_flat" + xsol).read_text() #flatten the multiple files
 
 APIsolcV = "v0.8.18-nightly.2023.1.25+commit.fd9ac9ab" #latest nightly as default
 match solcV: #match solidity compiler version to API accepted verification version name
@@ -158,20 +179,17 @@ match solcV: #match solidity compiler version to API accepted verification versi
         APIsolcV = 'v0.8.0+commit.c7dfd78e'
     case '0.8.1':
         APIsolcV = 'v0.8.1+commit.df193b15'
-    case '0.8.9':
-        APIsolcV = 'v0.8.9+commit.e5eed63a'
-
 
 #verifying the code on a block explorer
 if verifyBlockExplorer == True: #https://docs.etherscan.io/tutorials/verifying-contracts-programmatically
-    time.sleep(30)#give the explorer some time to register the transaction
+    time.sleep(20)#give the explorer some time to register the transaction
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     if constructorArgs == False:
         content = { 
-                'apikey': os.getenv('EtherscanAPIKey2'),
+                'apikey': os.getenv('EtherscanAPIKey'),
                 'module': 'contract',
                 'action': 'verifysourcecode',
-                'sourceCode': flat, #if failing make sure to flatten the contract https://github.com/BlockCatIO/solidity-flattener
+                'sourceCode': contract, #if failing make sure to flatten the contract https://github.com/BlockCatIO/solidity-flattener
                 'contractaddress': tx_receipt.contractAddress,
                 'codeformat': 'solidity-single-file',
                 'contractname': contractName,
@@ -188,10 +206,10 @@ if verifyBlockExplorer == True: #https://docs.etherscan.io/tutorials/verifying-c
         encoding = os.popen(cmd).read()
 #        print(encoding.replace(" ", "").replace("\n", "")) if auto-verify fails you can print the encoding and manually verify
         content = {
-                'apikey': os.getenv('EtherscanAPIKey2'),
+                'apikey': os.getenv('EtherscanAPIKey'),
                 'module': 'contract',
                 'action': 'verifysourcecode',
-                'sourceCode': flat, #if failing make sure to flatten the contract https://github.com/BlockCatIO/solidity-flattener
+                'sourceCode': contract, #if failing make sure to flatten the contract https://github.com/BlockCatIO/solidity-flattener
                 'contractaddress': tx_receipt.contractAddress,
                 'codeformat': 'solidity-single-file',
                 'contractname': contractName,
@@ -202,5 +220,5 @@ if verifyBlockExplorer == True: #https://docs.etherscan.io/tutorials/verifying-c
                 'evmversion': '',
                 'licenseType': 5 #GPL 3
         }
-    response = requests.post(url, headers=headers, data=content) #not sure how to properly check for response working though
+    response = requests.post(url, headers=headers, params=content) #not sure how to properly check for response working though
     print(response.text)

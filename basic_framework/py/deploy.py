@@ -25,6 +25,22 @@ chain = os.getenv('CurrentChain') #set the current chain in .env
 with open(contractDir + contractFile, "r") as file:
     contract = file.read()
 
+
+if bool(os.getenv('VerifyBlockExplorer')) == True:
+    verifyBlockExplorer = True
+else:
+    verifyBlockExplorer = False
+
+if os.getenv('MultiFile') == "True": #flatten based on multifile arg
+    flatOutput = os.popen("cd ../solidity-flattener/ && npm start").read()
+    print(flatOutput)
+    if flatOutput.contains("Success!"):
+        print("flattened contract!")
+    else:
+        print("failed to flatten multi-file contract, verification wont succeed automatically!")
+        if verifyBlockExplorer == True:
+            exit(1)
+
 install_solc(solcV)
 #NOTE: Theoretically we can just default to compile_files later right now its convinient to use working impls
 if os.getenv('MultiFile') == "False":
@@ -63,10 +79,6 @@ else:
 #for item in compilation["./contracts/UniDirectionalPaymentChannel.sol:UniDirectionalPaymentChannel"]:
  #  print(item)
 
-if os.getenv('VerifyBlockExplorer') == "True":
-    verifyBlockExplorer = True
-else:
-    verifyBlockExplorer = False
 
                             #set whether to verify on block explorer
                             #turn off when using ganache or anything else without one
