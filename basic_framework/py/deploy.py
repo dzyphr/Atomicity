@@ -85,8 +85,8 @@ else:
 #NOTE: Theoretically we can just default to compile_files later right now its convinient to use working impls
 if os.getenv('MultiFile') == "False":
     #write contract compilation to json file
-    with open(contractName + xcomp + xjson, "w") as file:
-        json.dump(compilation, file)
+    #with open(contractName + xcomp + xjson, "w") as file:
+    #    json.dump(compilation, file) #this tends to produce relatively large ~1mb files which are not used so we will keep this optional
     #get contract bytecode
     bytecode = compilation["contracts"][contractFile][contractName]["evm"]["bytecode"]["object"]
     #write bytecode to txt file
@@ -99,8 +99,8 @@ if os.getenv('MultiFile') == "False":
         json.dump(abi, file)
 else:
     #write contract compilation to json file
-    with open(contractName + xcomp + xjson, "w") as file:
-        json.dump(compilation, file)
+    #with open(contractName + xcomp + xjson, "w") as file:
+    #    json.dump(compilation, file) ##this tends to produce relatively large ~1mb files which are not used so we will keep this optional
     #get contract bytecode
     bytecode = compilation[contractDir + contractName + xsol + ":" + contractName]['bin']
     #write bytecode to txt file
@@ -111,8 +111,6 @@ else:
     #write abi to file
     with open(contractName + xabi + xjson, "w") as file:
         json.dump(abi, file)
-    #TODO:flattening not automated yet
-    flat = Path(contractDir + contractName + "_flat" + xsol).read_text() #flatten the multiple files
 
 if os.getenv('MultiFile') == "True": #flatten based on multifile arg
     flat = Path(contractDir + contractName + "_flat" + xsol).read_text() #flatten the multiple files
@@ -131,13 +129,8 @@ InitContract = rpc.eth.contract(abi=abi, bytecode=bytecode)
 print("current gas price :", rpc.eth.gas_price );
 
 if constructorArgs == True:
-    #IF YOU HAVE CONSTRUCTOR PARAMETERS FILL THE VALUES IN ORDER INTO THIS LIST
-#    constructorParamVals = [
-#    ] #automating this
 
-    tx = InitContract.constructor(*constructorParamVals).buildTransaction( 
-            #since there is constructor arguments in the contract provide them 
-            #in the constructor() function call parenthesis
+    tx = InitContract.constructor(*constructorParamVals).buildTransaction( #if we have constructor parameters we unwrap the array of their arguments into the constructor()
         {
             "chainId": chain_id, 
             "from": senderAddr, 
@@ -197,7 +190,8 @@ if verifyBlockExplorer == True: #https://docs.etherscan.io/tutorials/verifying-c
                 'licenseType': 5 #GPL 3
         }
     else:
-        cmd = "node js/abiEnc.js " + contractName + " " + str(len(constructorParamVals))
+        cmd = "node js/abiEnc.js " + contractName + " " + str(len(constructorParamVals)) #we will call the abiEnc.js program followed by contractname and constructor args
+                                                                                        #to get the abi encoded constructor arguments
         for val in constructorParamVals:
             cmd = cmd + " " + str(val)
         encoding = os.popen(cmd).read()
