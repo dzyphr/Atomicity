@@ -11,6 +11,7 @@ void echoConstructorArgsTrue(string newFrameName);
 void echoMultiFileFalse(string newFrameName);
 void echoConstructorArgsFalse(string newFrameName);
 void echoMultiFileTrue(string newFrameName);
+void properCAProvided(string newFrameName, unsigned int constructorArgCount, vector<string> argumentVector, unsigned int argumentIndex, string pyFmtArgArray);
 int main(int argc, char* argv[])
 {
 	if (argc < 2)
@@ -97,6 +98,29 @@ void arg2IsConstructorArgs(int argc, char* argv[])
 	}
 }
 
+void properCAProvided(string newFrameName, char* argv[], unsigned int constructorArgCount, vector<string> argumentVector, unsigned int argumentIndex, string pyFmtArgArray)
+{
+	for (int i = 0; i < constructorArgCount; i++)
+	{
+		argumentVector.push_back(argv[argumentIndex + i]);
+	}
+	int i = 0;
+	for (auto const& value : argumentVector)
+	{
+		//cout << value << '\n';
+		pyFmtArgArray = pyFmtArgArray + value;
+		if (i != argumentVector.size()-1)
+		{
+			pyFmtArgArray = pyFmtArgArray + ',';
+		}
+		i = i + 1;
+
+	}
+	pyFmtArgArray = pyFmtArgArray + ']';
+	string pyEchoArgArray = "echo \'" + pyFmtArgArray + "\' | cat - " + newFrameName  + "/py/deploy.py > pyFmtArgsTEMP && mv pyFmtArgsTEMP " + newFrameName + "/py/deploy.py";
+	system(pyEchoArgArray.c_str());
+}
+
 void arg2IsCAargcIsGorEto4(int argc, char* argv[])
 {
 	string newFrameName = argv[1];
@@ -108,26 +132,8 @@ void arg2IsCAargcIsGorEto4(int argc, char* argv[])
 	string pyFmtArgArray = "constructorParamVals = [";
 	if (argc >= argumentIndex + constructorArgCount)
 	{
-		for (int i = 0; i < constructorArgCount; i++)
-		{
-			argumentVector.push_back(argv[argumentIndex + i]);
-		}
-		int i = 0;
-		for (auto const& value : argumentVector)
-		{
-			//cout << value << '\n';
-			pyFmtArgArray = pyFmtArgArray + value;
-			if (i != argumentVector.size()-1)
-			{
-				pyFmtArgArray = pyFmtArgArray + ',';
-			}
-			i = i + 1;
 
-		}
-		pyFmtArgArray = pyFmtArgArray + ']';
-		string pyEchoArgArray = "echo \'" + pyFmtArgArray + "\' | cat - " + newFrameName  + "/py/deploy.py > pyFmtArgsTEMP && mv pyFmtArgsTEMP " + newFrameName + "/py/deploy.py";
-		system(pyEchoArgArray.c_str());
-		//cout << pyFmtArgArray << '\n';
+		properCAProvided(newFrameName, argv, constructorArgCount, argumentVector, argumentIndex, pyFmtArgArray);
 	}
 	else
 	{
@@ -170,26 +176,8 @@ void arg2IsMargcIsGorEto4(int argc, char* argv[])
 			string pyFmtArgArray = "constructorParamVals = [";
 			if (argc >= argumentIndex + constructorArgCount)
 			{
-				for (int i = 0; i < constructorArgCount; i++)
-				{
-					argumentVector.push_back(argv[argumentIndex + i]);
-				}
-				int i =0;
-				for (auto const& value : argumentVector)
-				{
-				//      cout << value << '\n';
-					pyFmtArgArray = pyFmtArgArray + value;
-					if (i != argumentVector.size()-1)
-					{
-						pyFmtArgArray = pyFmtArgArray + ',';
-					}       
-					i = i + 1;
-				}
-				pyFmtArgArray = pyFmtArgArray + ']';
-				string pyEchoArgArray = "echo \'" + pyFmtArgArray + "\' | cat - " + newFrameName  + "/py/deploy.py > pyFmtArgsTEMP && mv pyFmtArgsTEMP " + newFrameName + "/py/deploy.py";
-				system(pyEchoArgArray.c_str());
 
-				//cout << pyFmtArgArray << '\n';
+				properCAProvided(newFrameName, argv, constructorArgCount, argumentVector, argumentIndex, pyFmtArgArray);
 			}
 			else
 			{
