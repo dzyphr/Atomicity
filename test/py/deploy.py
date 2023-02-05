@@ -1,5 +1,4 @@
-constructorParamVals = [['0xFe4cc19ea6472582028641B2633d3adBB7685C69', '0x01225869F695b4b7F0af5d75381Fe340A4d27593'], 2]
-
+constructorParamVals = ["[\"test\"]"]
 import pathlib
 from pathlib import Path
 import requests
@@ -195,33 +194,23 @@ if verifyBlockExplorer == True: #https://docs.etherscan.io/tutorials/verifying-c
         cmd = "node js/abiEnc.js " + contractName + " " + str(len(constructorParamVals)) #we will call the abiEnc.js program followed by contractname and constructor args
                                                                                         #to get the abi encoded constructor arguments
         for val in constructorParamVals:
-            #loop through param val types if array convert it to pipe-able array
-            if type(val) == list:
-                strlist = "\"["
-                for i in range(len(val)):
-                    if i < len(val)-1:
-                        strlist = strlist + "\\\"" + val[i] + "\\\"," 
-                    else:
-                        strlist = strlist + "\\\"" + val[i] + "\\\""
-                strlist = strlist + "]\""
-                val = strlist                    
             cmd = cmd + " " + str(val)
         encoding = os.popen(cmd).read()
-        #print(encoding.replace(" ", "").replace("\n", "")) #if auto-verify fails you can print the encoding and manually verify
+#        print(encoding.replace(" ", "").replace("\n", "")) if auto-verify fails you can print the encoding and manually verify
         content = {
-            'apikey': os.getenv('EtherscanAPIKey'),
-            'module': 'contract',
-            'action': 'verifysourcecode',
-            'sourceCode': contract, #if failing make sure to flatten the contract https://github.com/BlockCatIO/solidity-flattener
-            'contractaddress': tx_receipt.contractAddress,
-            'codeformat': 'solidity-single-file',
-            'contractname': contractName,
-            'compilerversion': APIsolcV,
-            'optimizationUsed': 0, #0 or 1
-            'runs': 200,
-            'constructorArguements': encoding.replace(" ", "").replace("\n", ""), #popen leaves empty space remove w replace()
-            'evmversion': '',
-            'licenseType': 5 #GPL 3
+                'apikey': os.getenv('EtherscanAPIKey'),
+                'module': 'contract',
+                'action': 'verifysourcecode',
+                'sourceCode': contract, #if failing make sure to flatten the contract https://github.com/BlockCatIO/solidity-flattener
+                'contractaddress': tx_receipt.contractAddress,
+                'codeformat': 'solidity-single-file',
+                'contractname': contractName,
+                'compilerversion': APIsolcV,
+                'optimizationUsed': 0, #0 or 1
+                'runs': 200,
+                'constructorArguements': encoding.replace(" ", "").replace("\n", ""), #popen leaves empty space remove w replace()
+                'evmversion': '',
+                'licenseType': 5 #GPL 3
         }
     response = requests.post(url, headers=headers, params=content) #not sure how to properly check for response working though
     print(response.text)

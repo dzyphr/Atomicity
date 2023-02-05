@@ -193,6 +193,16 @@ if verifyBlockExplorer == True: #https://docs.etherscan.io/tutorials/verifying-c
         cmd = "node js/abiEnc.js " + contractName + " " + str(len(constructorParamVals)) #we will call the abiEnc.js program followed by contractname and constructor args
                                                                                         #to get the abi encoded constructor arguments
         for val in constructorParamVals:
+            #loop through param val types if array convert it to pipe-able array
+            if type(val) == list:
+                strlist = "\"["
+                for i in range(len(val)):
+                    if i < len(val)-1:
+                        strlist = strlist + "\\\"" + val[i] + "\\\","
+                    else:
+                        strlist = strlist + "\\\"" + val[i] + "\\\""
+                strlist = strlist + "]\""
+                val = strlist
             cmd = cmd + " " + str(val)
         encoding = os.popen(cmd).read()
 #        print(encoding.replace(" ", "").replace("\n", "")) if auto-verify fails you can print the encoding and manually verify

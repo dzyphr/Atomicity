@@ -40,7 +40,7 @@
 
 ### This will attempt to make a new folder within the current Directory named after your `ContractName` as long as you are not signed in as super user / root it will warn you if it tries to overwrite a folder. BE CAREFUL not to overwrite anything you need using this command, reccomended not to use it in super user / root for this reason. 
 
-#### NOTE: If you have constructor parameters use the flag `-CA` followed by the number of parameters, and then one argument for each parameter. You must provide these in a way that will convert to proper python format. For example String: `\"String\"` Bool: `True` or `False`. Addresses must be provided like strings, note they use escape character `\` to maintain the quotation marks while being processed as an argument.
+#### NOTE: If you have constructor parameters use the flag `-CA` followed by the number of parameters, and then one argument for each parameter. You must provide these in a way that will convert to proper python format. For example String: `\"String\"` Bool: `True` or `False`. Addresses must be provided like strings, note they use escape character `\` to maintain the quotation marks while being processed as an argument. 
 
 #### NOTE: If you have multiple contract files that you need to compile all together, use the `-M` flag. You can use `-M` or `-CA` iterchangably provided you give all the correct follow-up parameters if using `-CA` this format should follow for future arguments. The `-M` flag will now automatically fill the config.json for solidity-flattener for you and deploy.py will flatten right before the compilation!
 

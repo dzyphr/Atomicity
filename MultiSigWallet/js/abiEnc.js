@@ -19,7 +19,14 @@ process.argv.forEach(function (arg, index, array) {
 				{
 					if (index < array.length)
 					{
-						constructorParamsVals.push(arg)
+						if (arg.includes("["))
+						{
+							constructorParamsVals.push(JSON.parse(arg)) //if array parse as json obj
+						}
+						else
+						{
+							constructorParamsVals.push(arg)
+						}
 					}
 				}
 				else
@@ -34,6 +41,8 @@ lastindex = index
 })
 if (constructorParamsVals.length != constructorParams)
 {
+	console.log(constructorParamsVals.length, " != ", constructorParams);
+	console.log(constructorParamsVals);
 	throw 'provided less constructor parameter values than number of constructor parameters!'
 }
 if (lastindex < 3)
@@ -92,11 +101,25 @@ if (constructorParams > 0)
 	)
 	for (let i = 0;  i < constructorParams; i++)
 	{
-		var encStr = web3.eth.abi.encodeParameter(typeArray[i], constructorParamsVals[i]).toString()
-		var chop0x = encStr.slice(2) //encStr with 0x removed
-		encodedConstructor = encodedConstructor + chop0x
+/*		var encStr;
+		var chop0x
+		if (typeArray[i].includes("[]"))
+		{
+			console.log(typeArray[i], JSON.parse(constructorParamsVals[i]))
+			encStr = web3.eth.abi.encodeParameter(typeArray[i], JSON.parse(constructorParamsVals[i])).toString()
+			chop0x = encStr.slice(2)
+		}
+		else
+		{
+			console.log(typeArray[i], constructorParamsVals[i])
+			encStr = web3.eth.abi.encodeParameter(typeArray[i], constructorParamsVals[i]).toString()
+			chop0x = encStr.slice(2) //encStr with 0x removed
+		}
+		encodedConstructor = encodedConstructor + chop0x*/
+		encodedConstructor = web3.eth.abi.encodeParameters(typeArray, constructorParamsVals)
+		chop0x = encodedConstructor.slice(2)
 	}
-	console.log(encodedConstructor)
+	console.log(chop0x)
 }
 else
 {

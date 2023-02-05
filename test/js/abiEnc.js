@@ -19,15 +19,7 @@ process.argv.forEach(function (arg, index, array) {
 				{
 					if (index < array.length)
 					{
-						if (arg.includes("["))
-                                                {
-                                                        constructorParamsVals.push(JSON.parse(arg)) //if array parse as json obj
-                                                }
-                                                else
-                                                {
-                                                        constructorParamsVals.push(arg)
-                                                }
-
+						constructorParamsVals.push(arg)
 					}
 				}
 				else
@@ -38,7 +30,7 @@ process.argv.forEach(function (arg, index, array) {
 			}
 			break
 	}
-	lastindex = index
+lastindex = index
 })
 if (constructorParamsVals.length != constructorParams)
 {
@@ -100,10 +92,21 @@ if (constructorParams > 0)
 	)
 	for (let i = 0;  i < constructorParams; i++)
 	{
-		encodedConstructor = web3.eth.abi.encodeParameters(typeArray, constructorParamsVals)
-		chop0x = encodedConstructor.slice(2)
+		var encStr;
+                var chop0x
+                if (typeArray[i].includes("[]")) //if were parsing an array parse the argument as JSON
+                {
+                        encStr = web3.eth.abi.encodeParameter(typeArray[i], JSON.parse(constructorParamsVals[i])).toString()
+                        chop0x = encStr.slice(2)
+                }
+                else
+                {
+                        encStr = web3.eth.abi.encodeParameter(typeArray[i], constructorParamsVals[i]).toString()
+                        chop0x = encStr.slice(2) //encStr with 0x removed
+                }
+		encodedConstructor = encodedConstructor + chop0x
 	}
-	console.log(chop0x)
+	console.log(encodedConstructor)
 }
 else
 {
