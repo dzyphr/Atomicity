@@ -175,6 +175,8 @@ if verifyBlockExplorer == True: #https://docs.etherscan.io/tutorials/verifying-c
     time.sleep(20)#give the explorer some time to register the transaction
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     if constructorArgs == False:
+        if os.getenv('MultiFile') == "True":
+            contract = flat
         content = { 
                 'apikey': os.getenv('EtherscanAPIKey'),
                 'module': 'contract',
@@ -205,6 +207,8 @@ if verifyBlockExplorer == True: #https://docs.etherscan.io/tutorials/verifying-c
                 val = strlist
             cmd = cmd + " " + str(val)
         encoding = os.popen(cmd).read()
+        if os.getenv('MultiFile') == "True":
+            contract = flat
 #        print(encoding.replace(" ", "").replace("\n", "")) if auto-verify fails you can print the encoding and manually verify
         content = {
                 'apikey': os.getenv('EtherscanAPIKey'),
