@@ -11,7 +11,7 @@ void echoConstructorArgsTrue(string newFrameName);
 void echoMultiFileFalse(string newFrameName);
 void echoConstructorArgsFalse(string newFrameName);
 void echoMultiFileTrue(string newFrameName);
-void properCAProvided(string newFrameName, unsigned int constructorArgCount, vector<string> argumentVector, unsigned int argumentIndex, string pyFmtArgArray);
+void properCAProvided(string newFrameName, char* argv[], unsigned int constructorArgCount, vector<string> argumentVector, unsigned int argumentIndex, string pyFmtArgArray);
 int main(int argc, char* argv[])
 {
 	if (argc < 2)
