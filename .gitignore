@@ -6,14 +6,14 @@ milkAave*
 aave*
 milk*
 
-#ignore testname folder from test_new_frame output
-testname*
 
 #ignore test projects that arent official examples (no official examples yet)
-MultiSigWallet*
-Payable*
-SafePayable*
-UniDirectionalPaymentChannel*
-VerifySignature*
-simple_storage*
-test*
+MultiSigWallet/
+Payable/
+SafePayable/
+UniDirectionalPaymentChannel/
+VerifySignature/
+simple_storage/
+simple_storage_constructor
+test/
+testname/
