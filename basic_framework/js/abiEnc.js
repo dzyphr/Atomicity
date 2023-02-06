@@ -1,4 +1,4 @@
-var dotenv = require('dotenv').config()  
+const dotenv = require('dotenv').config()  
 var contractName = ""
 var constructorParams = 0
 var constructorParamsVals = []

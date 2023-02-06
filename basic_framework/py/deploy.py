@@ -165,10 +165,12 @@ match solcV: #match solidity compiler version to API accepted verification versi
         APIsolcV = 'v0.7.5+commit.eb77ed08'
     case '0.7.6':
         APIsolcV = 'v0.7.6+commit.7338295f'
-    case '0.8.0':
+    case '0.8.0':                           #gets confusing at 8.0 need to make sure we arent skipping a generation
         APIsolcV = 'v0.8.0+commit.c7dfd78e'
     case '0.8.1':
         APIsolcV = 'v0.8.1+commit.df193b15'
+    case '0.8.17':
+        APIsolcV = 'v0.8.17+commit.8df45f5f'
 
 #verifying the code on a block explorer
 if verifyBlockExplorer == True: #https://docs.etherscan.io/tutorials/verifying-contracts-programmatically

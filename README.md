@@ -36,9 +36,9 @@
 
 ## Basic Usage:
 
-### After .env variables are set up, run `new_frame ContractName` and replace `ContractName` with the name of your contract.
+ After .env variables are set up, run `new_frame ContractName` and replace `ContractName` with the name of your contract.
 
-### This will attempt to make a new folder within the current Directory named after your `ContractName` as long as you are not signed in as super user / root it will warn you if it tries to overwrite a folder. BE CAREFUL not to overwrite anything you need using this command, reccomended not to use it in super user / root for this reason. 
+ This will attempt to make a new folder within the current Directory named after your `ContractName` as long as you are not signed in as super user / root it will warn you if it tries to overwrite a folder. BE CAREFUL not to overwrite anything you need using this command, reccomended not to use it in super user / root for this reason. 
 
 #### NOTE: If you have constructor parameters use the flag `-CA` followed by the number of parameters, and then one argument for each parameter. You must provide these in a way that will convert to proper python format. For example String: `\"String\"` Bool: `True` or `False`. Addresses must be provided like strings, note they use escape character `\` to maintain the quotation marks while being processed as an argument. 
 
@@ -46,12 +46,20 @@
 
 
 
-#### `cd` to the newly created folder named after the `ContractName` argument you just chose.
+ `cd` to the newly created folder named after the `ContractName` argument you just chose.
 
-#### Write your contract in the `/contracts` folder. Note that we have not tested contracts using libraries yet only single page.
+ Write your contract in the `/contracts` folder. Note that we have not tested contracts using libraries yet only single page.
 
-#### Finally run `deploy.sh` (`python3 py/deploy.py`) 
+ Finally run `deploy.sh` (`python3 py/deploy.py`) 
 
-#### If your rpc gives gas estimation issues it's because were calling `rpc.eth.gas_price` and sometimes this can be innacurate enough to revert the transaction. Increase the `gasMod` variable on line 19 of deploy.py to multiply the gas price by the desired amount. Feel free to change the equation to raise gas for your own needs, and ONLY use any real-live-mainnet gas tokens AT YOUR OWN RISK! Testnet First!
+######  If your rpc gives gas estimation issues it's because were calling `rpc.eth.gas_price` and sometimes this can be innacurate enough to revert the transaction. Increase the `gasMod` variable on line 19 of deploy.py to multiply the gas price by the desired amount. 
 
-###### Ofcourse it's expected that occasionally you won't know if you need Multiple Contract Files or Constructor Arguments before you set up your contract. In that case you can easily manually add the content for these features. For Multiple Files make sure `MultiFile="True"` in the project's .env file. After that change the directory in solidity-flattener/config.json to match the directory of your project. If you have Constructor Arguments then make sure `ConstructorArgs="True"` in your project's .env file. Then create a list within the global scope of the project's py/deploy.py file that looks something like `constructorParamVals = ["myConstructorParamArg"]` fill the list with your constructor arguments in the order you want to call them. With those tweaks you will be able to modify the state of the framework interpreter after you've already started working on the project. We plan to add some commands to help automate this post processing so people dont have to modify the python code or their .envs manually.
+###### Feel free to change the equation to raise gas for your own needs, and ONLY use any real-live-mainnet gas tokens AT YOUR OWN RISK! Testnet First!
+
+######  Ofcourse it's expected that occasionally you won't know if you need Multiple Contract Files or Constructor Arguments before you set up your contract. 
+
+###### In that case you can easily manually add the content for these features. For Multiple Files make sure `MultiFile="True"` in the project's .env file. 
+
+###### After that change the directory in solidity-flattener/config.json to match the directory of your project. If you have Constructor Arguments then make sure `ConstructorArgs="True"` in your project's .env file. Then create a list within the global scope of the project's py/deploy.py file that looks something like `constructorParamVals = ["myConstructorParamArg"]` fill the list with your constructor arguments in the order you want to call them. 
+
+###### With those tweaks you will be able to modify the state of the framework interpreter after you've already started working on the project. We plan to add some commands to help automate this post processing so people dont have to modify the python code or their .envs manually.
