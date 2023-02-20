@@ -48,7 +48,7 @@
 
  `cd` to the newly created folder named after the `ContractName` argument you just chose.
 
- Write your contract in the `/contracts` folder. Note that we have not tested contracts using libraries yet only single page.
+ Write your contract in the `/contracts` folder. Note that we have not tested contracts using libraries yet only multi and single file contracts.
 
  Finally run `deploy.sh` (`python3 py/deploy.py`) 
 
