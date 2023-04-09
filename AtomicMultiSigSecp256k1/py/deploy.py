@@ -1,5 +1,4 @@
-constructorParamVals = [1,2,3,4,5]
-constructorParamVals = [1,2,3,4,5]
+constructorParamVals = ["0x01225869F695b4b7F0af5d75381Fe340A4d27593",42400519223117534116346632694710501995821188406087768118892021945084465904173,114889226203209843865006093805441622753065798669452445124965901933685737553201]
 import pathlib
 from pathlib import Path
 import requests
@@ -21,7 +20,7 @@ xbyte = "-bytecode"
 contractDir = "./contracts/"
 contractFile = contractName + xsol
 constructorArgs = bool(os.getenv('ConstructorArgs'))
-gasMod = 2
+gasMod = 1
 chain = os.getenv('CurrentChain') #set the current chain in .env
 
 with open(contractDir + contractFile, "r") as file:
@@ -34,13 +33,6 @@ else:
     verifyBlockExplorer = False
 
 if os.getenv('MultiFile') == "True": #flatten based on multifile arg
-#changes the flattener config based on current contract expects flattener in base directory / prev directory / `../solidity-flattener`
-    change_conf = "echo \'{\"inputFilePath\": \"../" + \
-                contractName  + "/contracts/" + \
-                contractName  + ".sol\",\"outputDir\": \"../" + \
-                contractName  + "/contracts/\"}\' > ../solidity-flattener/config.json"
-    c = os.popen(change_conf).read()
-    print(c)
     flatOutput = os.popen("cd ../solidity-flattener/ && npm start").read()
     print(flatOutput)
     if "Success!" in flatOutput:
@@ -82,6 +74,11 @@ else:
     )
 
 
+#debug compilation output keys
+#for item in compilation:
+ #   print(item)
+#for item in compilation["./contracts/UniDirectionalPaymentChannel.sol:UniDirectionalPaymentChannel"]:
+ #  print(item)
 
 
                             #set whether to verify on block explorer
@@ -115,6 +112,10 @@ else:
     #write abi to file
     with open(contractName + xabi + xjson, "w") as file:
         json.dump(abi, file)
+
+if os.getenv('MultiFile') == "True": #flatten based on multifile arg
+    flat = Path(contractDir + contractName + "_flat" + xsol).read_text() #flatten the multiple files
+
 
 #PICK THE CHAIN HERE #fills all chain specific args with env variables
 if chain == "Goerli":

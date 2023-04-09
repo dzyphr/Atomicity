@@ -1,5 +1,4 @@
-constructorParamVals = [1,2,3,4,5]
-constructorParamVals = [1,2,3,4,5]
+constructorParamVals = [0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798,0x483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8,0,7,0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F]
 import pathlib
 from pathlib import Path
 import requests
@@ -21,7 +20,7 @@ xbyte = "-bytecode"
 contractDir = "./contracts/"
 contractFile = contractName + xsol
 constructorArgs = bool(os.getenv('ConstructorArgs'))
-gasMod = 2
+gasMod = 1
 chain = os.getenv('CurrentChain') #set the current chain in .env
 
 with open(contractDir + contractFile, "r") as file:
@@ -34,13 +33,6 @@ else:
     verifyBlockExplorer = False
 
 if os.getenv('MultiFile') == "True": #flatten based on multifile arg
-#changes the flattener config based on current contract expects flattener in base directory / prev directory / `../solidity-flattener`
-    change_conf = "echo \'{\"inputFilePath\": \"../" + \
-                contractName  + "/contracts/" + \
-                contractName  + ".sol\",\"outputDir\": \"../" + \
-                contractName  + "/contracts/\"}\' > ../solidity-flattener/config.json"
-    c = os.popen(change_conf).read()
-    print(c)
     flatOutput = os.popen("cd ../solidity-flattener/ && npm start").read()
     print(flatOutput)
     if "Success!" in flatOutput:
@@ -82,6 +74,11 @@ else:
     )
 
 
+#debug compilation output keys
+#for item in compilation:
+ #   print(item)
+#for item in compilation["./contracts/UniDirectionalPaymentChannel.sol:UniDirectionalPaymentChannel"]:
+ #  print(item)
 
 
                             #set whether to verify on block explorer
@@ -116,6 +113,10 @@ else:
     with open(contractName + xabi + xjson, "w") as file:
         json.dump(abi, file)
 
+if os.getenv('MultiFile') == "True": #flatten based on multifile arg
+    flat = Path(contractDir + contractName + "_flat" + xsol).read_text() #flatten the multiple files
+
+
 #PICK THE CHAIN HERE #fills all chain specific args with env variables
 if chain == "Goerli":
     rpc = Web3(Web3.HTTPProvider(os.getenv('Goerli')))
@@ -135,7 +136,7 @@ if constructorArgs == True:
             "chainId": chain_id, 
             "from": senderAddr, 
             "nonce": rpc.eth.getTransactionCount(senderAddr), 
-            "gasPrice": rpc.eth.gas_price * gasMod
+            "gasPrice": rpc.eth.gas_price * gasMod + 100
         }
     )
 else:
@@ -144,7 +145,7 @@ else:
             "chainId": chain_id,
             "from": senderAddr,
             "nonce": rpc.eth.getTransactionCount(senderAddr),
-            "gasPrice": rpc.eth.gas_price * gasMod
+            "gasPrice": rpc.eth.gas_price * gasMod + 100
         }
     )
 
