@@ -1,5 +1,4 @@
-constructorParamVals = [1,2,3,4,5]
-constructorParamVals = [1,2,3,4,5]
+#constructorParamVals = [1,2,3,4,5]
 import pathlib
 from pathlib import Path
 import requests
