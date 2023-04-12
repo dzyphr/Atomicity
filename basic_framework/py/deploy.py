@@ -44,6 +44,7 @@ if os.getenv('MultiFile') == "True": #flatten based on multifile arg
     print(flatOutput)
     if "Success!" in flatOutput:
         print("flattened contract!")
+        flat = open("contracts/" + contractName + "_flat.sol", "r")
     else:
         print("failed to flatten multi-file contract, verification wont succeed automatically!")
         if verifyBlockExplorer == True:
