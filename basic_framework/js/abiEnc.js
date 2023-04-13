@@ -60,6 +60,9 @@ switch(currentChain)
 	case "Goerli":
 		web3 = new Web3(Web3.givenProvider || process.env.Goerli)
 		break
+	case "Sepolia":
+		web3 = new Web3(Web3.givenProvider || process.env.Sepolia)
+		break
 	case "Ganache":
 		web3 = new Web3(Web3.givenProvider || process.env.LocalGanache)
 		break
