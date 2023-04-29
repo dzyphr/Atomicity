@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3d854939-cc23-4699-8e69-3112570179fc" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../basic_framework/py/deploy.py" beforeDir="false" afterPath="$PROJECT_DIR$/../basic_framework/py/deploy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../solidity-flattener/config.json" beforeDir="false" afterPath="$PROJECT_DIR$/../solidity-flattener/config.json" afterDir="false" />
-    </list>
+    <list default="true" id="3d854939-cc23-4699-8e69-3112570179fc" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -31,7 +28,7 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "/home/ryan/Documents/CustomProgramLibrary/Solidity/w3py/AtomicMultiSigSecp256k1"
+    "last_opened_file_path": "/home/ryan/Documents/CustomProgramLibrary/ErgoTestNet/ErgoTestNet/ergo-synced-node/ergo-node/scalaSigmaParticle/AtomicMultiSig"
   }
 }]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />

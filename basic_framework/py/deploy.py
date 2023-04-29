@@ -35,12 +35,61 @@ def getAccount():
     elif chain == "Sepolia":
         sys.stdout.write(os.getenv("SepoliaSenderAddr"))
 
+def getBalance(address):
+    if chain == "Goerli":
+        rpc = Web3(Web3.HTTPProvider(os.getenv('Goerli')))
+        bal = str(rpc.eth.get_balance(address))
+        sys.stdout.write(bal)
+    elif chain == "Sepolia":
+        rpc = Web3(Web3.HTTPProvider(os.getenv('Sepolia')))
+        bal = str(rpc.eth.get_balance(address))
+        sys.stdout.write(bal)
+
+def sendAmount(amount, receiver):
+    if chain == "Goerli":
+        rpc = Web3(Web3.HTTPProvider(os.getenv('Goerli')))
+        chain_id = int(os.getenv('GoerliID')) #use int so it doesnt interpret env variable as string values
+        senderAddr = os.getenv('GoerliSenderAddr')
+        senderPrivKey = os.getenv('GoerliPrivKey')
+        url = os.getenv('GoerliScan')
+    elif chain == "Sepolia":
+        rpc = Web3(Web3.HTTPProvider(os.getenv('Sepolia')))
+        chain_id = int(os.getenv('SepoliaID'))
+        senderAddr = os.getenv('SepoliaSenderAddr')
+        senderPrivKey = os.getenv('SepoliaPrivKey')
+        url = os.getenv('SepoliaScan')
+    txdata  = {
+        'to': receiver,
+        'from': senderAddr,
+        'value': int(amount),
+        'gasPrice': rpc.eth.gas_price * gasMod,
+        'gas': 70000,
+        'nonce': rpc.eth.get_transaction_count(senderAddr)
+    }
+    signed = rpc.eth.account.sign_transaction(txdata, senderPrivKey)
+    rpc.eth.send_raw_transaction(signed.rawTransaction)
+
 
 args_n = len(sys.argv)
+#make sure to exit after calling these as they are meant to be independant functions from command line
 if args_n > 1:
     if sys.argv[1] == "getAccount":
         getAccount()
         exit()
+    elif sys.argv[1] == "sendAmount":
+        if args_n > 3:
+            sendAmount(sys.argv[2], sys.argv[3])
+            exit()
+        else:
+            print("enter amount(in wei) and receiver evm pubkey as followup arguments to sendAmount")
+            exit()
+    elif sys.argv[1] == "getBalance":
+        if args_n > 2:
+            getBalance(sys.argv[2])
+            exit()
+        else:
+            print("enter address to get balance from as followup argument")
+            exit()
 
 
 with open(contractDir + contractFile, "r") as file:
